@@ -10,8 +10,10 @@
 import logging
 import unittest
 import sys
-sys.path.append('..\\..\\')
-from geolocation import resolve_ip as ResolveIp
+import os
+sys.path.append('C://ipaddress//geolocation')
+print(os.path)
+import geolocation.resolve_ip as ResolveIp  # noqa: E402
 
 
 class TestResolveIp(unittest.TestCase):
