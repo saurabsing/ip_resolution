@@ -66,6 +66,7 @@ def run():
     panoplywriter.saveData()
     logger.info('Batch Job completed')
     print("Finished the main batch job in %s seconds" % str((time.time() - seconds) // 1))
+    return True
 
 
 if __name__ == "__main__":
