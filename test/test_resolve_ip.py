@@ -8,22 +8,10 @@
 
 
 import logging
-import multiprocessing as processes
-import utility_functions as utility
-from panoply_connection import PanoplyConnector
-from geo_service import IPDataService
-from data_export import S3Writer, PanoplyWriter
-from ip_resolution import IpResolver
-from service_config import ServiceConfig
-import time
-import psutil
-import os
 import unittest
 import sys
-import resolve_ip as ResolveIp
-
-sys.path.append('../../')
-
+sys.path.append('..\\..\\')
+from geolocation import resolve_ip as ResolveIp
 
 
 class TestResolveIp(unittest.TestCase):
