@@ -1,5 +1,5 @@
 # README #
-Microservice named batch-processing-service.
+Batch job
 
 ### What is this repository for? ###
 * Batch python job for ip resolution
