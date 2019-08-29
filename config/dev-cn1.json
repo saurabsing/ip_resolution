@@ -1,0 +1,9 @@
+{
+  "panoplydatabase": {
+    "user": "saurabh@squarepanda.com",
+    "password": "*****",
+    "database": "squarepanda",
+    "host": "db.panoply.io",
+    "port": 5439
+  }
+}

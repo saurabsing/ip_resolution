@@ -1,0 +1,59 @@
+{
+  "eventDatabase": {
+    "hosts": ["10.0.0.46", "10.0.0.56", "10.0.0.120"]
+  },
+  "legacyDatabase": {
+    "host": "10.0.0.38",
+    "port": 27017,
+    "dbName": "zug-phonics-production"
+  },
+  "database": {
+    "username": "cloud_services_app",
+    "password": "cloud_services_app",
+    "database": "cloud_services",
+    "host": "prod-cn1-postgres-master.cgvmhrewc94e.rds.cn-north-1.amazonaws.com.cn",
+    "port": 5432,
+    "dialect": "postgres"
+  },
+  "dataFiles": {
+    "schools": "config/schools.csv",
+    "teachers": "config/teachers.csv"
+  },
+  "tiers": {
+    "consumer": 8,
+    "education": 3,
+    "pandaPass": 9
+  },
+  "classroomSize": {
+    "consumer": 3,
+    "education": 30
+  },
+  "userDefaultSettings": {
+    "locale": "zh_CN",
+    "country": "CN",
+    "region": "Beijing",
+    "city": "Beijing"
+  },
+  "legacyUserBlacklist": [
+    "58f79451bb609749094f17b7", "58f83f58bb609749094f25a7", "58f841e3bb609749094f260d"
+  ],
+  "targetBucket": "squarepanda-prod-cn-content",
+  "bucketRegion": "cn-north-1",
+  "legacyCloudProvider": "ALIYUN",
+  "legacyBucket": "squarepanda-dev",
+  "legacyBucketUrl": "https://squarepanda-china-beijing.oss-cn-beijing.aliyuncs.com",
+  "downloadDirectory": "/tmp/copy_bucket_files",
+  "jobs": [
+    {
+      "name": "student-statistic-hourly",
+      "frequency": "hourly",
+      "handler": "studentStatistic.hourly"
+    },
+    {
+      "name": "student-statistic-monthly",
+      "frequency": "daily",
+      "scheduledTime": "17:30",
+      "handler": "studentStatisticMonthly.monthly"
+    }
+  ]
+}
