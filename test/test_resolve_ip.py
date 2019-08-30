@@ -27,6 +27,7 @@ class TestResolveIp(unittest.TestCase):
     def test_case2(self):
         """..."""
         connector = PanoplyConnector()
+        query_panoply = 'select distinct ipaddress from activity_us (nolock) where ipaddress is not null limit 20'
         for dataframe_ip_address in connector.getPandasDataFrameBatch(query_panoply):
             dataframes = utility.splitDataframe(dataframe_ip_address)
         self.assertTrue(dataframes.shape[0] > 0)
