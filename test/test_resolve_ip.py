@@ -14,14 +14,21 @@ import os
 sys.path.append('C://ipaddress//geolocation')
 #sys.path.append('..//..//')
 import resolve_ip as ResolveIp  # noqa: E402
-
+import utility_functions as utility  # noqa: E402
 
 class TestResolveIp(unittest.TestCase):
-    """Unit Tests for SkillComputation."""
+    """Unit Tests for """
 
     def test_case1(self):
         """..."""
         self.assertTrue(ResolveIp.run())
+
+    def test_case2(self):
+        """..."""
+        connector = PanoplyConnector()
+        for dataframe_ip_address in connector.getPandasDataFrameBatch(query_panoply):
+            dataframes = utility.splitDataframe(dataframe_ip_address)
+        self.assertTrue(dataframes.shape[0] > 0)
 
 
 if __name__ == '__main__':
