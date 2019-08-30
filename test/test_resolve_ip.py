@@ -19,8 +19,6 @@ import resolve_ip as ResolveIp  # noqa: E402
 class TestResolveIp(unittest.TestCase):
     """Unit Tests for SkillComputation."""
 
-    logger = logging.getLogger('ip_resolution_test')
-
     def test_case1(self):
         """..."""
         self.assertTrue(ResolveIp.run())
