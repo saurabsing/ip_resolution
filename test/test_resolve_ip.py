@@ -15,6 +15,7 @@ sys.path.append('C://ipaddress//geolocation')
 #sys.path.append('..//..//')
 import resolve_ip as ResolveIp  # noqa: E402
 import utility_functions as utility  # noqa: E402
+import panoply_connection  # noqa: E402
 
 class TestResolveIp(unittest.TestCase):
     """Unit Tests for """
