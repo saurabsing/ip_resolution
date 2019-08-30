@@ -41,7 +41,7 @@ def run():
     config = ServiceConfig().getConfig()
     query_panoply = config["panoplydatabase"]["readQuery"]
 
-    utility.cleanS3Path(config)
+    # utility.cleanS3Path(config)
     ipResolver = IpResolver()
     connector = PanoplyConnector()
 
