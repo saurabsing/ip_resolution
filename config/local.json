@@ -6,8 +6,8 @@
   "host":"db.panoply.io",
   "port":5439,
   "readQueryTest":"select distinct ipaddress from activity_us (nolock) where ipaddress is not null limit 20",
-  "readQuery":"select distinct ipaddress from activity_us (nolock) where ipaddress is not null and (regexp_replace(ipaddress,'::ffff:','')  not in  ('10.0.0.89','10.0.0.28')) limit 100",
-  "chunksize":100
+  "readQuery":"select distinct ipaddress from activity_us (nolock) where ipaddress is not null and (regexp_replace(ipaddress,'::ffff:','')  not in  ('10.0.0.89','10.0.0.28')) limit 10",
+  "chunksize":10
 },
 "geoservice": {
     "url":"https://api.ipdata.co/ipaddress?api-key=userkey",

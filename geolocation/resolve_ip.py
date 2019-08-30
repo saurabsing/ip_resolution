@@ -62,6 +62,7 @@ def run():
             p.join()
             # print(str(p.exitcode))
 
+    return True
     panoplywriter = PanoplyWriter()
     panoplywriter.saveData()
     logger.info('Batch Job completed')

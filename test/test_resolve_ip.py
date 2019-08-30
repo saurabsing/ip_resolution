@@ -12,14 +12,14 @@ import unittest
 import sys
 import os
 sys.path.append('C://ipaddress//geolocation')
-print(os.path)
-import geolocation.resolve_ip as ResolveIp  # noqa: E402
+#sys.path.append('..//..//')
+import resolve_ip as ResolveIp  # noqa: E402
 
 
 class TestResolveIp(unittest.TestCase):
     """Unit Tests for SkillComputation."""
 
-    logger = logging.getLogger('ip_resolution')
+    logger = logging.getLogger('ip_resolution_test')
 
     def test_case1(self):
         """..."""
@@ -28,10 +28,10 @@ class TestResolveIp(unittest.TestCase):
 
 if __name__ == '__main__':
     # Setup logging
-    logger = logging.getLogger('ip_resolution')
+    logger = logging.getLogger('ip_resolution_test')
     logger.setLevel(logging.INFO)
 
-    log_handler = logging.FileHandler('C:\\ipaddress_logs\\ip_resolution.log')
+    log_handler = logging.FileHandler('C:\\ipaddress_logs\\ip_resolution_tests.log')
     log_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
     logger.addHandler(log_handler)
 
