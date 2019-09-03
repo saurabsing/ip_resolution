@@ -30,7 +30,7 @@ class TestResolveIp(unittest.TestCase):
         query_panoply = 'select distinct ipaddress from activity_us (nolock) where ipaddress is not null limit 20'
         for dataframe_ip_address in connector.getPandasDataFrameBatch(query_panoply):
             dataframes = utility.splitDataframe(dataframe_ip_address)
-        self.assertTrue(dataframes.len() > 0)
+            self.assertTrue(len(dataframes) > 0)
 
 
 if __name__ == '__main__':
