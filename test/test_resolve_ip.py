@@ -31,6 +31,7 @@ class TestResolveIp(unittest.TestCase):
         for dataframe_ip_address in connector.getPandasDataFrameBatch(query_panoply):
             dataframes = utility.splitDataframe(dataframe_ip_address)
             self.assertTrue(len(dataframes) > 0)
+        print('test')
 
 
 if __name__ == '__main__':
