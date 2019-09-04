@@ -2,7 +2,7 @@
 # @Date:   2019-09-03T19:10:31+05:30
 # @Email:  saurabh@squarepanda.com
 # @Last modified by:   Singh Saurabh
-# @Last modified time: 2019-09-04T11:21:18+05:30
+# @Last modified time: 2019-09-04T11:33:33+05:30
 # This is an appspec.yml template file for use with an EC2/On-Premises deployment in CodeDeploy.
 # The lines in this template starting with the hashtag symbol are
 #   instructional comments and can be safely left in the file or
@@ -28,10 +28,8 @@ os: linux
 #   "files" section altogether. A blank or incomplete "files" section
 #   may cause associated deployments to fail.
 files:
-  - source:
-    destination:
-  - source:
-    destination:
+  - source: /
+    destination: /home/ubuntu/ipproject
 # For deployments to Amazon Linux, Ubuntu Server, or RHEL instances,
 #   you can specify a "permissions"
 #   section here that describes special permissions to apply to the files
