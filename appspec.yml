@@ -2,7 +2,7 @@
 # @Date:   2019-09-03T19:10:31+05:30
 # @Email:  saurabh@squarepanda.com
 # @Last modified by:   Singh Saurabh
-# @Last modified time: 2019-09-05T15:07:19+05:30
+# @Last modified time: 2019-09-05T15:09:39+05:30
 # This is an appspec.yml template file for use with an EC2/On-Premises deployment in CodeDeploy.
 # The lines in this template starting with the hashtag symbol are
 #   instructional comments and can be safely left in the file or
@@ -80,10 +80,10 @@ hooks:
 # During the ApplicationStart deployment lifecycle event, run the commands
 #   in the script specified in "location".
   ApplicationStart:
-    - location: geolocation/init
+    - location: geolocation/init.sh
       timeout: 900
       runas: root
-    - location: geolocation/start
+    - location: geolocation/start.sh
       timeout: 900
       runas: root
 # During the ValidateService deployment lifecycle event, run the commands
