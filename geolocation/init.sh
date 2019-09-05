@@ -6,7 +6,6 @@
 # @Last modified by:   Singh Saurabh
 #
 # Setup for stream-processing-service
-
 # Ensures a python pip package is installed.  The function first checks to see if
 # the package is already installed.  If not, the package is installed.  Requires
 # that pip3 is installed.  May exit if errors are encountered.
@@ -74,4 +73,4 @@ check_pip_package "s3fs"
 
 mkdir -p /home/ubuntu/logs/
 
-echo "Completed initialzation"
+echo "Completed initialzation "
