@@ -2,7 +2,7 @@
 # @Date:   2019-09-03T19:10:31+05:30
 # @Email:  saurabh@squarepanda.com
 # @Last modified by:   Singh Saurabh
-# @Last modified time: 2019-09-05T13:20:59+05:30
+# @Last modified time: 2019-09-05T13:28:32+05:30
 # This is an appspec.yml template file for use with an EC2/On-Premises deployment in CodeDeploy.
 # The lines in this template starting with the hashtag symbol are
 #   instructional comments and can be safely left in the file or
@@ -53,8 +53,8 @@ permissions:
       user:
       type:
       range:
-    type: file
-      -
+    type: 
+      - file
 # If you are not running any commands on the Amazon EC2 instance, then remove
 #   the "hooks" section altogether. A blank or incomplete "hooks" section
 #   may cause associated deployments to fail.
