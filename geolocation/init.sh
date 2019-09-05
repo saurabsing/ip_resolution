@@ -73,4 +73,4 @@ check_pip_package "s3fs"
 
 mkdir -p /home/ubuntu/logs/
 
-echo "Completed initialzation "
+echo "Completed initialzation"
