@@ -73,5 +73,6 @@ check_pip_package "psycopg2"
 check_pip_package "s3fs"
 
 mkdir -p /home/ubuntu/logs/
+mkdir -p /home/ubuntu/ipproject
 
 echo "Completed initialzation"

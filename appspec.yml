@@ -2,7 +2,7 @@
 # @Date:   2019-09-03T19:10:31+05:30
 # @Email:  saurabh@squarepanda.com
 # @Last modified by:   Singh Saurabh
-# @Last modified time: 2019-09-04T13:00:45+05:30
+# @Last modified time: 2019-09-05T12:33:56+05:30
 # This is an appspec.yml template file for use with an EC2/On-Premises deployment in CodeDeploy.
 # The lines in this template starting with the hashtag symbol are
 #   instructional comments and can be safely left in the file or
@@ -16,7 +16,7 @@ version: 0.0
 #   instances.
 # Specify "os: windows" if this revision targets Windows Server instances.
 # (You cannot specify both "os: linux" and "os: windows".)
-os: linux
+os: ubuntu
 # os: windows
 # During the Install deployment lifecycle event (which occurs between the
 #   BeforeInstall and AfterInstall events), copy the specified files
@@ -29,7 +29,7 @@ os: linux
 #   may cause associated deployments to fail.
 files:
   - source: /
-    destination: /home/ubuntu/ipproject
+    destination: /home/ubuntu/
 # For deployments to Amazon Linux, Ubuntu Server, or RHEL instances,
 #   you can specify a "permissions"
 #   section here that describes special permissions to apply to the files
@@ -41,12 +41,12 @@ files:
 #   "permissions" section altogether. A blank or incomplete "permissions"
 #   section may cause associated deployments to fail.
 permissions:
-  - object:
-    pattern:
+  - object: /home/ubuntu/ipproject
+    pattern: "**"
     except:
-    owner:
-    group:
-    mode:
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
     acls:
       -
     context:
@@ -86,42 +86,27 @@ hooks:
     - location:
       timeout:
       runas:
-    - location:
-      timeout:
-      runas:
 # During the BeforeInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   BeforeInstall:
-    - location: lifecycle/init.sh
-      timeout: 300
-      runas: root
-    - location:
-      timeout:
-      runas:
+    - location: /lifecycle/init.sh
+      timeout: 900
+      runas: ubuntu
 # During the AfterInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   AfterInstall:
-    - location:
-      timeout:
-      runas:
-    - location:
-      timeout:
-      runas:
+    - location: /lifecycle/start.sh
+      timeout: 900
+      runas: ubuntu
 # During the ApplicationStart deployment lifecycle event, run the commands
 #   in the script specified in "location".
   ApplicationStart:
     - location:
       timeout:
       runas:
-    - location:
-      timeout:
-      runas:
 # During the ValidateService deployment lifecycle event, run the commands
 #   in the script specified in "location".
   ValidateService:
-    - location:
-      timeout:
-      runas:
     - location:
       timeout:
       runas:
