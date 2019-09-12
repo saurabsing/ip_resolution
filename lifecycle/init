@@ -71,6 +71,7 @@ check_pip_package "linecache"
 check_pip_package "pandas"
 check_pip_package "psycopg2"
 check_pip_package "s3fs"
+check_pip_package "psutil"
 
 mkdir -p /home/ubuntu/logs/
 mkdir -p /home/ubuntu/ipproject

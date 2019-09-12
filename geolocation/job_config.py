@@ -3,17 +3,17 @@
 # Dissemination, use, or reproduction of this material is strictly forbidden
 # unless prior written permission is obtained from Square Panda Inc.
 # @Last modified by:   Singh Saurabh
-"""Module that provides service configuration."""
+"""Module that provides job configuration."""
 
 import os
 import json
 
 
-class ServiceConfig:
-    """Provide service configuration."""
+class JobConfig:
+    """Provide job configuration."""
 
     def __init__(self):
-        """Initialize instance of ServiceConfig."""
+        """Initialize instance of JobConfig."""
         self.config = {}
 
         current_dir = os.getcwd()
@@ -26,15 +26,15 @@ class ServiceConfig:
             env_json = json.load(env_file)
             self.config = env_json.copy()
 
-    def getConfig(self):
-        """Return configuration contained within this instance.  Configuration is repesented in dict."""
+    def getconfig(self):
+        """Return configuration contained within this instance.Configuration is repesented in dict."""
         return self.config
 
 
 def main():
-    """Create instance of ServiceConfig."""
-    config = ServiceConfig().getConfig()
-    print(config['stream']['kafkaHost'])
+    """Create instance of JobConfig."""
+    config = JobConfig().getConfig()
+    print(config['test']['test'])
 
 
 if __name__ == "__main__":

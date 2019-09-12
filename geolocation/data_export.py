@@ -4,39 +4,49 @@
 # unless prior written permission is obtained from Square Panda Inc.
 # @Last modified by:   Singh Saurabh
 
-"""A simple Database Connector class"""
+"""Module that provides classes for exporting data to external or AWS service.
+
+This module has an abstract interface for Data Export classes and specific export
+class to AWS S3 filesystem, Panoply datawarehouse.
+"""
 
 from __future__ import annotations
-
 from abc import ABC, abstractmethod
-
 import s3fs
 import time
-import logging
 from datetime import date
 import psycopg2
-from service_config import ServiceConfig
-import psutil
-import os
+from job_config import JobConfig
+import utility_functions as utility
+import sys
 
-class DataWriter(ABC):
-    """This class gives a pandas dataframe writer."""
+
+class DataExport(ABC):
+    """This class acts as an interface to declare abstract methods for data export."""
 
     @abstractmethod
-    def saveData(self, dataframe_pandas):
+    def save_data(self, dataframe_pandas):
+        """Save pandas data."""
         pass
 
     @abstractmethod
-    def appendData(self, dataframe_pandas, processNo):
+    def append_data(self, dataframe_pandas, processNo):
+        """Append to pandas data to existing persisted data."""
+        pass
+
+    @abstractmethod
+    def cleanup(self):
+        """To clean resources."""
         pass
 
 
-class S3Writer(DataWriter):
-    """This class gives a S3 writer."""
+class S3Writer(DataExport):
+    """Provides implementations of storing data in Pandas dataframe to AWS S3."""
 
     def __init__(self):
-        """Initialize instance of IPAddressResolver."""
-        self.config = ServiceConfig().getConfig()
+        """Initialize connection to S3."""
+        self.config = JobConfig().getconfig()
+        self.logger = utility.getlogger('ip_resolution', 'ip_resolution')
         self.filePath = self.config['storageDetails']['filePath']
         self.fileName = self.config['storageDetails']['fileName']
         self.fileExtension = self.config['storageDetails']['fileExtension']
@@ -47,31 +57,43 @@ class S3Writer(DataWriter):
                           + '/' + str(self.fileName) + str(self.fileExtension)
         self.fileWriter = s3fs.S3FileSystem(self.awsKey, self.secretKey)
 
-    def getFileUrl(self, num=0):
-        """Initialize instance of IPAddressResolver."""
+    def setlogger(self, processNo):
+        """Get Logger for use in a python child process."""
+        self.logger = utility.getlogger('s3writer', 's3writer', processNo)
+
+    def getfileurl(self, num=0):
+        """Get file url to existing file path."""
         return 's3://' + str(self.filePath) + '/' + str(self.directoryName) \
             + '/' + str(self.fileName) + str(num) + str(self.fileExtension)
 
-    def saveData(self, dataframe_pandas):
-        """Initialize instance of IPAddressResolver."""
+    def save_data(self, dataframe_pandas):
+        """Save pandas dataframe to S3."""
         try:
             data_bytes = dataframe_pandas[['ipaddress', 'ipaddress_stripped', 'country', 'city', 'region']] \
                 .to_csv(None, index=False).encode()
             with self.fileWriter.open(self.s3file_url, mode='wb', block_size=None, acl='public-read') as pointer:
                 pointer.write(data_bytes)
                 pointer.close()
-            print("Finished writing in S3")
+            self.logger.info("Finished writing in S3")
+        except IOError as e:
+            self.logger.info("I/O error({0}): {1}".format(e.errno, e.strerror))
+            self.logger.error(utility.print_exception())
+            sys.exit()
         except Exception as ex:
-            print(ex)
-            raise
+            self.logger.info('Issue with saving to S3:' + str(ex))
+            self.logger.error(utility.print_exception())
+            sys.exit()
+        finally:
+            self.cleanup()
 
-    def appendData(self, dataframe_pandas, processNo):
-        """Initialize instance of IPAddressResolver."""
+    def append_data(self, dataframe_pandas, processNo):
+        """Save pandas dataframe to S3 in append mode."""
         try:
             seconds = time.time()
-            print("Started the file append operation %s at %s " % (str(processNo), time.time()))
-            s3file_url = self.getFileUrl(processNo)
+            self.logger.info("Started the file append operation %s at %s " % (str(processNo), time.time()))
+            s3file_url = self.getfileurl(processNo)
             fileExists = self.fileWriter.exists(s3file_url)
+            self.logger.info('s3 files url:' + s3file_url)
             if fileExists:
                 data_bytes = dataframe_pandas[['ipaddress', 'ipaddress_stripped', 'country', 'city', 'region']] \
                     .to_csv(None, header=False, index=False).encode()
@@ -81,25 +103,31 @@ class S3Writer(DataWriter):
             with self.fileWriter.open(s3file_url, mode='ab', block_size=None, acl='public-read') as pointer:
                 pointer.write(data_bytes)
                 pointer.close()
-            print("Ended file append operation %s in %s " % (str(processNo), time.time() - seconds))
+            self.logger.info("Ended file append operation %s in %s " % (str(processNo), time.time() - seconds))
+        except IOError as e:
+            self.logger.info("I/O error({0}): {1}".format(e.errno, e.strerror))
+            self.logger.error(utility.print_exception())
+            sys.exit()
         except Exception as ex:
-            print(ex)
-            raise
+            self.logger.info('Issue with saving to S3:' + str(ex))
+            self.logger.error(utility.print_exception())
+            sys.exit()
         finally:
             self.cleanup()
 
     def cleanup(self):
-        """Perform cleanup of resources for Data connector"""
+        """Perform cleanup of resources."""
         self.fileWriter = None
-        print('cleaned file')
+        self.logger.info('cleaned file writers')
 
 
-class PanoplyWriter(DataWriter):
-    """This class gives a S3 writer."""
+class PanoplyWriter(DataExport):
+    """Provides implementations of storing Pandas dataframe to Panoply datawarehouse."""
 
-    def __init__(self, num=0):
-        """Initialize instance of IPAddressResolver."""
-        self.config = ServiceConfig().getConfig()
+    def __init__(self):
+        """Initialize panoply connection."""
+        self.config = JobConfig().getconfig()
+        self.logger = utility.getlogger('ip_resolution', 'ip_resolution')
         self.filePath = self.config['storageDetails']['filePath']
         self.fileName = self.config['storageDetails']['fileName']
         self.fileExtension = self.config['storageDetails']['fileExtension']
@@ -115,24 +143,56 @@ class PanoplyWriter(DataWriter):
         host = self.config['panoplydatabase']['host']
         port = self.config['panoplydatabase']['port']
         self.connection = psycopg2.connect(user=username, password=password, host=host, port=port, database=db)
-        self.copy_command = """truncate """ + self.tableName + """ ; copy """ + self.tableName + """ from '""" + self.s3file_url + """'
+        self.write_command = """BEGIN; truncate """ + self.tableName + """ ; copy """ + self.tableName + """ from '""" + self.s3file_url + """'
         access_key_id  '""" + self.awsKey + """'
         secret_access_key '""" + self.secretKey + """'
         region '""" + self.region + """'
         ignoreheader 1
         null as 'NA'
         removequotes
-        delimiter ',';"""
+        delimiter ','; COMMIT;"""
+        self.append_command = """BEGIN; copy """ + self.tableName + """ from '""" + self.s3file_url + """'
+        access_key_id  '""" + self.awsKey + """'
+        secret_access_key '""" + self.secretKey + """'
+        region '""" + self.region + """'
+        ignoreheader 1
+        null as 'NA'
+        removequotes
+        delimiter ','; COMMIT;"""
 
-    def saveData(self):
-        """write comments"""
-        cursor = self.connection.cursor()
-        cursor.execute(self.copy_command)
-        self.connection.commit()
-        cursor.close()
+    def setlogger(self, processNo):
+        """Get Logger for use in a python child process."""
+        self.logger = utility.getlogger('panoplywriter', 'panoplywriter', processNo)
+
+    def save_data(self, mode='w'):
+        """Save data from S3 to Panoply table using copy command."""
+        self.logger.info('Panoply file urls:' + self.s3file_url)
+        if mode == 'a':
+            command = self.append_command
+        else:
+            command = self.write_command
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(command)
+            self.connection.commit()
+            self.logger.info('finished copying to redshift')
+        except psycopg2.DatabaseError as e:
+            self.logger.info("Database error({0}): {1}".format(e.errno, e.strerror))
+            self.logger.error(utility.print_exception())
+            sys.exit()
+        except Exception as ex:
+            self.logger.info('Issue with copying from S3 to Panoply redshift:' + str(ex))
+            self.logger.error(utility.print_exception())
+            sys.exit()
+        finally:
+            cursor.close()
+            self.cleanup()
+
+    def append_data(self):
+        """Append data from S3 to Panoply table using copy command."""
+        self.saveData(mode='a')
+
+    def cleanup(self):
+        """Perform cleanup of resources."""
         self.connection.close()
-        print('finished copying to redshift')
-
-    def appendData(self):
-        """write comments"""
-        self.saveData()
+        self.logger.info('closed panoply writer')
