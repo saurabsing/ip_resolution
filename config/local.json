@@ -1,8 +1,8 @@
 {
   "panoplydatabase": {
-  "user":"",
-  "password":"",
-  "database":"",
+  "user":"saurabh@squarepanda.com",
+  "password":"Satyam1!",
+  "database":"squarepanda",
   "host":"db.panoply.io",
   "port":5439,
   "readQueryTest":"select distinct ipaddress from activity_us (nolock) where ipaddress is not null limit 20",

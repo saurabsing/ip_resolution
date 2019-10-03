@@ -17,6 +17,7 @@ from job_config import JobConfig
 import os
 import psutil
 import utility_functions as utility
+from datetime import datetime
 
 
 class IPResolver:
@@ -36,7 +37,7 @@ class IPResolver:
         try:
             df = dataframe_ip_address
             df['ipaddress_stripped'] = df['ipaddress'].apply(lambda x: x.strip('::ffff:'))
-            df.assign(city='', country='', region='')
+            df.assign(city='', country='', region='', createdAt='')
             return df
         except Exception as ex:
             self.logger.info('Issue in preprocessing logic:' + ex)
@@ -49,6 +50,9 @@ class IPResolver:
             df['country'] = df['country'].apply(lambda x: str(x).replace("'", "") if x else x)
             df['city'] = df['city'].apply(lambda x: str(x).replace("'", "") if x else x)
             df['region'] = df['region'].apply(lambda x: str(x).replace("'", "") if x else x)
+            now = datetime.now()
+            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            df['createdAt'] = dt_string
             return df
         except Exception as ex:
             self.logger.info('Issue in postprocessing logic:' + ex)
@@ -105,7 +109,7 @@ class IPResolver:
             dataframe_ip_preprocessed = self.preprocess(dataframe_ip_address)
             dataframe_ip_processed = self.get_address(dataframe_ip_preprocessed, geocoding_service)
             dataframe_results = self.postprocess(dataframe_ip_processed)
-            print(dataframe_results)
+            # print(dataframe_results)
             datawriter.setlogger(processNo)
             datawriter.append_data(dataframe_results, processNo)
             process = psutil.Process(os.getpid())
