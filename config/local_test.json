@@ -1,0 +1,32 @@
+{
+  "panoplydatabase": {
+  "user":"saurabh@squarepanda.com",
+  "password":"Satyam1!",
+  "database":"squarepanda",
+  "host":"db.panoply.io",
+  "port":5439,
+  "readQueryTest":"select distinct ipaddress from activity_us (nolock) where ipaddress is not null limit 20",
+  "readQuery":"select distinct ipaddress from activity_us (nolock) where ipaddress is not null and (regexp_replace(ipaddress,'::ffff:','')  not in  ('10.0.0.89','10.0.0.28')) limit 10",
+  "chunksize":10
+},
+"geoservice": {
+    "url":"https://api.ipdata.co/ipaddress?api-key=userkey",
+    "apikey2":"fac747744d422765b70cbdc663e3f6e74efeab6b44c698f28b9b8b6e",
+    "apikey1":"4fe89c01b52f96c5669ccc77986ae6fec375500f4eb7dc2a967a1bdd",
+    "apikey":"2a6316a6496caba724734f8e89737bebad1a1bcacd1e3ee0ac94701e"
+},
+"storageDetails": {
+    "filePath": "temporary-space-saurabh",
+    "fileName": "IP_Address_from_IPData",
+    "fileExtension": ".csv",
+    "awsKey":"",
+    "secretKey":"",
+    "columns":"",
+    "tableName1":"sp_ipaddress_parsed_us_ipdata",
+    "tableName":"test_sp_ipaddress_parsed_us",
+    "region":"us-east-1"
+},
+"processConfig":{
+    "noOfParallelProcess":2
+}
+}

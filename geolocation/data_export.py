@@ -95,11 +95,9 @@ class S3Writer(DataExport):
             fileExists = self.fileWriter.exists(s3file_url)
             self.logger.info('s3 files url:' + s3file_url)
             if fileExists:
-                data_bytes = dataframe_pandas[['ipaddress', 'ipaddress_stripped', 'country', 'city', 'region', 'createdAt']] \
-                    .to_csv(None, header=False, index=False).encode()
+                data_bytes = dataframe_pandas.to_csv(None, header=False, index=False).encode()
             else:
-                data_bytes = dataframe_pandas[['ipaddress', 'ipaddress_stripped', 'country', 'city', 'region', 'createdAt']] \
-                    .to_csv(None, header=True, index=False).encode()
+                data_bytes = dataframe_pandas.to_csv(None, header=True, index=False).encode()
             with self.fileWriter.open(s3file_url, mode='ab', block_size=None, acl='public-read') as pointer:
                 pointer.write(data_bytes)
                 pointer.close()

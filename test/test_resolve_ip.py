@@ -28,7 +28,7 @@ class TestResolveIp(unittest.TestCase):
     """Unit Tests for batch job."""
 
     def test_case_panoplyImport_dataframes(self):
-        """..."""
+        """Test the import of dataframe from Panoply."""
         connector = PanoplyImport()
         config = JobConfig().getconfig()
         query_panoply = 'select distinct ipaddress from activity_us (nolock) where ipaddress is not null limit 40'
@@ -37,7 +37,7 @@ class TestResolveIp(unittest.TestCase):
         print('Ran test_case_panoplyImport_dataframes test case')
 
     def test_case_dataframe_splitCheck(self):
-        """..."""
+        """Test the splitting of dataframe based on processes no."""
         connector = PanoplyImport()
         query_panoply = 'select distinct ipaddress from activity_us (nolock) where ipaddress is not null limit 40'
         for panda_df in connector.getbatch_pandas_dataframe(query_panoply):
@@ -49,7 +49,7 @@ class TestResolveIp(unittest.TestCase):
         print('Ran test_case_dataframe_splitCheck test case')
 
     def test_case_fetch_ipdata_geolocation(self):
-        """..."""
+        """Test the geoservice GET api response."""
         ipdata_geoservice = IPDataService()
         hostname = socket.gethostname()
         ipaddress = socket.gethostbyname(hostname)
@@ -59,8 +59,26 @@ class TestResolveIp(unittest.TestCase):
         self.assertIn('city', addressObject)
         print('Ran test_case_fetch_ipdata_geolocation test case')
 
-    def test_case_resolve_ipdata(self):
-        """..."""
+    def test_case_s3_writer(self):
+        """Test file write to S3 bucket."""
+        config = JobConfig().getconfig()
+        utility.check_s3path(config)
+        panoplyreader = PanoplyImport()
+        datawriter = S3Writer()
+        # print(dataframe_results)
+        query_panoply = 'select distinct ipaddress from activity_us (nolock) where ipaddress is not null limit 10'
+        dataframe_results = panoplyreader.get_pandas_dataframe(query_panoply)
+        datawriter.append_data(dataframe_results, 0)
+        datawriter = S3Writer()
+        s3file_url = datawriter.getfileurl(0)
+        with datawriter.fileWriter.open(s3file_url, mode='rb') as pointer:
+            file_bytes = pointer.read()
+        data_bytes = dataframe_results[['ipaddress']].to_csv(None, header=False, index=False).encode()
+        self.assertEqual(file_bytes[11:], data_bytes)
+        print('Ran test_case_s3_writer test case')
+
+    def test_case_save_resolved_ipdata(self):
+        """Test the process of ip resolution and file placement in S3."""
         config = JobConfig().getconfig()
         utility.check_s3path(config)
         ipResolver = IPResolver()
@@ -83,12 +101,11 @@ class TestResolveIp(unittest.TestCase):
                 p.join()
         for i in range(1, config['processConfig']['noOfParallelProcess']):
             s3file_url = datawriter.getfileurl(i)
-            print(s3file_url)
             self.assertTrue(datawriter.fileWriter.exists(s3file_url))
-        print('Ran test_case_resolve_ipdata test case')
+        print('Ran test_case_save_resolved_ipdata test case')
 
-    def test_case_integration_pipeline(self):
-        """..."""
+    def test_case_ipresolution_pipeline(self):
+        """Test the complete flow of ip resolution and result load in panoply."""
         config = JobConfig().getconfig()
         utility.check_s3path(config)
         ip_resolver = IPResolver()
@@ -102,10 +119,9 @@ class TestResolveIp(unittest.TestCase):
         df = panoplyreader.get_pandas_dataframe(query_panoply)
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y")
-        print(df)
         df_string = df['created'].iloc[0]
         self.assertTrue(df_string[0:10] == dt_string)
-        print('Ran test_case_integration_pipeline test case')
+        print('Ran test_case_ipresolution_pipeline test case')
 
 
 if __name__ == '__main__':
